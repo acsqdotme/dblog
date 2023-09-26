@@ -32,3 +32,8 @@ That cloned in this new directory and a `.gitmodules` file:
 
 As always, more details can be found from [git
 themselves](https://git-scm.com/book/en/v2/Git-Tools-Submodules).
+
+## License
+
+This project is licensed under the LGPLv3. Check [`LICENSE`](./LICENSE) for
+details.
