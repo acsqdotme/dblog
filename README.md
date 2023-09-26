@@ -11,3 +11,7 @@ scanning. Will put details on how it works once it's done.
 ## git submodules
 
 This is a way for me to learn git submodules and put some progress here.
+
+I followed this simple
+[stackoverflow guide](https://stackoverflow.com/a/73598455/21316874) to move my
+git history over.
