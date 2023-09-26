@@ -1,4 +1,4 @@
-// Package sqlite for creating, reading, and writing to a sqlite database for my blog
+// Package dblog for creating, reading, and writing to a sqlite database for my blog
 package dblog
 
 import (
