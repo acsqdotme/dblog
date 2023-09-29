@@ -87,7 +87,7 @@ func MakeDB() (err error) {
   description TEXT NOT NULL,
   pub_date TEXT NOT NULL CHECK(pub_date LIKE '____-__-__'),
   update_date TEXT NOT NULL CHECK(update_date LIKE '____-__-__'),
-  thumbnail TEXT -- in json format but go engine can't handle real json
+  thumbnail TEXT
 )`); err != nil {
 		return err
 	}
