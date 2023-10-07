@@ -52,8 +52,8 @@ type Tag struct {
 	Description string
 }
 
-// OpenDB just opens the connection to the db from the pathToDB package var
-func OpenDB() (db *sql.DB) {
+// openDB just opens the connection to the db from the pathToDB package var
+func openDB() (db *sql.DB) {
 	db, err := sql.Open("sqlite3", pathToDB)
 	if err != nil {
 		log.Fatal(err.Error())
@@ -61,9 +61,9 @@ func OpenDB() (db *sql.DB) {
 	return db
 }
 
-// CloseDB is the mirror of open. Generally just defer it immediately after
-// OpenDB
-func CloseDB(db *sql.DB) {
+// closeDB is the mirror of open. Generally just defer it immediately after
+// openDB
+func closeDB(db *sql.DB) {
 	if db != nil {
 		db.Close()
 	}
@@ -75,8 +75,8 @@ func CloseDB(db *sql.DB) {
 // for a backup .sql file in the same directory as the db in case there's
 // backup data.
 func MakeDB() (err error) {
-	db := OpenDB()
-	defer CloseDB(db)
+	db := openDB()
+	defer closeDB(db)
 
 	// post table
 	if _, err = db.Exec(`CREATE TABLE IF NOT EXISTS posts (
@@ -128,8 +128,8 @@ func AggregatePosts(postQty int, filterTag string) (posts []Post, err error) {
 		return []Post{}, nil
 	}
 
-	db := OpenDB()
-	defer CloseDB(db)
+	db := openDB()
+	defer closeDB(db)
 
 	var query string
 	var filters []interface{}
@@ -181,8 +181,8 @@ func FetchPost(fileName string) (post Post, err error) {
 		return Post{}, errors.New(fileName + " doesn't exist")
 	}
 
-	db := OpenDB()
-	defer CloseDB(db)
+	db := openDB()
+	defer closeDB(db)
 
 	var id int
 	var thumbnailJSON sql.NullString
@@ -238,8 +238,8 @@ func FetchPost(fileName string) (post Post, err error) {
 // fetches just that post and gives back not only the img struct but the rest
 // of the post as well for easily being able to link back to the post.
 func FetchThumbnail() (post Post, err error) {
-	db := OpenDB()
-	defer CloseDB(db)
+	db := openDB()
+	defer closeDB(db)
 
 	var thumbnailJSON sql.NullString
 	err = db.QueryRow(`SELECT title, file_name, content, posts.description, pub_date, update_date, thumbnail
@@ -268,8 +268,8 @@ func FetchThumbnail() (post Post, err error) {
 // FetchTag is basically identical to FetchPost but way smaller and less
 // complicated
 func FetchTag(tagName string) (tag Tag, err error) {
-	db := OpenDB()
-	defer CloseDB(db)
+	db := openDB()
+	defer closeDB(db)
 
 	err = db.QueryRow(`SELECT name, description, category
   FROM tags
@@ -284,8 +284,8 @@ func FetchTag(tagName string) (tag Tag, err error) {
 // DoesPostExist is an evolution from my original filesystem func that I still
 // use called doesFileExist that ensures a certain post in actually in the db.
 func DoesPostExist(fileName string) bool {
-	db := OpenDB()
-	defer CloseDB(db)
+	db := openDB()
+	defer closeDB(db)
 
 	var count int
 	err := db.QueryRow(`SELECT COUNT(*)
@@ -301,8 +301,8 @@ func DoesPostExist(fileName string) bool {
 
 // DoesTagExist is the exact same deal as DoesPostExist
 func DoesTagExist(tag string) bool {
-	db := OpenDB()
-	defer CloseDB(db)
+	db := openDB()
+	defer closeDB(db)
 
 	var count int
 	err := db.QueryRow(`SELECT COUNT(*)
@@ -360,8 +360,8 @@ func AddPost(post Post) (err error) {
 		}
 	}
 
-	db := OpenDB()
-	defer CloseDB(db)
+	db := openDB()
+	defer closeDB(db)
 
 	var jsonThumbnail []byte
 	if post.Thumbnail.Src != "" {
@@ -401,8 +401,8 @@ func AddTag(tag Tag) (err error) {
 		return err
 	}
 
-	db := OpenDB()
-	defer CloseDB(db)
+	db := openDB()
+	defer closeDB(db)
 
 	_, err = db.Exec(`INSERT INTO tags (name, category, description)
   VALUES
@@ -421,8 +421,8 @@ func DeletePost(fileName string) (err error) {
 		return errors.New(fileName + " doesn't exist")
 	}
 
-	db := OpenDB()
-	defer CloseDB(db)
+	db := openDB()
+	defer closeDB(db)
 
 	_, err = db.Exec(`DELETE FROM posts
   WHERE file_name = ?`, fileName)
@@ -439,8 +439,8 @@ func DeleteTag(tagName string) (err error) {
 		return errors.New(tagName + " doesn't exist")
 	}
 
-	db := OpenDB()
-	defer CloseDB(db)
+	db := openDB()
+	defer closeDB(db)
 
 	_, err = db.Exec(`DELETE FROM tags
   WHERE name = ?`, tagName)
