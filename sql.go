@@ -26,7 +26,6 @@ type DB struct {
 type Post struct {
 	Title       string
 	FileName    string
-	Content     string
 	Description string
 	PubDate     string
 	UpdateDate  string
@@ -83,7 +82,6 @@ func MakeDB() (err error) {
   id INTEGER PRIMARY KEY AUTOINCREMENT,
   title TEXT NOT NULL UNIQUE,
   file_name TEXT NOT NULL UNIQUE,
-  content TEXT NOT NULL,
   description TEXT NOT NULL,
   pub_date TEXT NOT NULL CHECK(pub_date LIKE '____-__-__'),
   update_date TEXT NOT NULL CHECK(update_date LIKE '____-__-__'),
@@ -186,9 +184,9 @@ func FetchPost(fileName string) (post Post, err error) {
 
 	var id int
 	var thumbnailJSON sql.NullString
-	err = db.QueryRow(`SELECT id, title, file_name, content, description, pub_date, update_date, thumbnail
+	err = db.QueryRow(`SELECT id, title, file_name, description, pub_date, update_date, thumbnail
   FROM posts
-  WHERE file_name = ?`, fileName).Scan(&id, &post.Title, &post.FileName, &post.Content, &post.Description, &post.PubDate, &post.UpdateDate, &thumbnailJSON)
+  WHERE file_name = ?`, fileName).Scan(&id, &post.Title, &post.FileName, &post.Description, &post.PubDate, &post.UpdateDate, &thumbnailJSON)
 	if err != nil {
 		return Post{}, err
 	}
@@ -242,7 +240,7 @@ func FetchThumbnail() (post Post, err error) {
 	defer closeDB(db)
 
 	var thumbnailJSON sql.NullString
-	err = db.QueryRow(`SELECT title, file_name, content, posts.description, pub_date, update_date, thumbnail
+	err = db.QueryRow(`SELECT title, file_name, posts.description, pub_date, update_date, thumbnail
   FROM posts JOIN posts_tags
   ON posts.id = posts_tags.post_id JOIN tags
   ON posts_tags.tag_id = tags.id
@@ -250,7 +248,7 @@ func FetchThumbnail() (post Post, err error) {
   AND posts.thumbnail IS NOT NULL
   AND posts.thumbnail <> ''
   ORDER BY posts.pub_date DESC
-  LIMIT 1`).Scan(&post.Title, &post.FileName, &post.Content, &post.Description, &post.PubDate, &post.UpdateDate, &thumbnailJSON)
+  LIMIT 1`).Scan(&post.Title, &post.FileName, &post.Description, &post.PubDate, &post.UpdateDate, &thumbnailJSON)
 	if err != nil {
 		if err == sql.ErrNoRows {
 			return Post{}, errors.New("no valid thumbnails exist")
@@ -322,7 +320,6 @@ func DoesTagExist(tag string) bool {
 func checkPost(p Post) error { // don't need to check thumbnail
 	if p.Title == "" ||
 		p.FileName == "" ||
-		p.Content == "" ||
 		p.Description == "" ||
 		p.PubDate == "" ||
 		p.UpdateDate == "" ||
@@ -371,10 +368,10 @@ func AddPost(post Post) (err error) {
 		}
 	}
 
-	_, err = db.Exec(`INSERT INTO posts (title, file_name, content, description, pub_date, update_date, thumbnail)
+	_, err = db.Exec(`INSERT INTO posts (title, file_name, description, pub_date, update_date, thumbnail)
   VALUES
   (?,  ?,  ?,  ?,  ?,  ?, ?)
-`, post.Title, post.FileName, post.Content, post.Description, post.PubDate, post.UpdateDate, string(jsonThumbnail))
+`, post.Title, post.FileName, post.Description, post.PubDate, post.UpdateDate, string(jsonThumbnail))
 	if err != nil {
 		return err
 	}
