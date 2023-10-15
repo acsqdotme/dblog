@@ -3,7 +3,7 @@ package dblog
 // DB custom type is gonna be my attempt at making paths to the database
 // defined in the original package. Still a todo for now.
 type DB struct {
-	PathToDB    string
+	PathToDB string
 }
 
 // Post type has pretty much all of the content and metadata that I'd need
