@@ -1,0 +1,17 @@
+{{ /* just a note that this double bracket stuff has no real meaning; just trying to show an example of using metadata in html */ }}
+
+{{ define "main" }}
+<article>
+  <h1>some post stuff</h1>
+  <p>dblog won’t even look at this stuff. This is just for your own usage
+  such as serving markdown for rss and html for the actual site.</p>
+
+  <time datetime="{{ .Post.PubDate }}">{{ .Post.PubDate }}</time>
+  <h4>Tags:</h4>
+  <nav>
+    {{ range tag := .Post.Tags }}
+    <a href="/tags/{{ tag.Name }}">{{ .tag.Name }}</a> 
+    {{ end }}
+  </nav>
+</article>
+{{ end }}
