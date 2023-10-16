@@ -5,8 +5,32 @@ of [angel-castaneda.com git repo](https://git.acsq.me/angel-castaneda.com).
 
 ## how it works
 
-I'm about to update a whole ton with this package to have auto post directory
-scanning. Will put details on how it works once it's done.
+dblog works by scanning a root posts directory that has the following structure:
+
+```console
+user@host:path/to/posts $ ls
+cool-post/
+epic-post/
+awesome-post/
+... # more post directories corresponding to url/filename of that post
+```
+
+then you can [ls] into any one of them and find:
+
+```console
+user@host:path/to/posts/cool-post $ ls
+meta.yml # only one that matters
+photos/ # scanner ignores anything else in dir
+post.html
+post.md
+```
+
+and [meta.yml] just needs to carry some metadata about the blog post to be
+useful (example of directory structure [here](./example-blog-post))
+
+Soon enough, I'll it scan for tags too and be a bit smarter about updating and
+deleting posts not found in the directory (also I guess I'll have to make the
+directory and database locales changeable.)
 
 ## converting to a git submodule
 
