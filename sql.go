@@ -49,7 +49,7 @@ func MakeDB() (err error) {
   pub_date TEXT NOT NULL CHECK(pub_date LIKE '____-__-__'),
   update_date TEXT NOT NULL CHECK(update_date LIKE '____-__-__'),
   thumbnail TEXT
-)`); err != nil {
+  )`); err != nil {
 		return err
 	}
 
@@ -59,7 +59,7 @@ func MakeDB() (err error) {
   name TEXT NOT NULL UNIQUE,
   category STRING NOT NULL DEFAULT 'content', -- for medium, content, and lang
   description TEXT
-)`); err != nil {
+  )`); err != nil {
 		return err
 	}
 
@@ -70,7 +70,7 @@ func MakeDB() (err error) {
   PRIMARY KEY (post_id, tag_id),
   FOREIGN KEY (post_id) REFERENCES posts(id) ON DELETE CASCADE,
   FOREIGN KEY (tag_id) REFERENCES tags(id) ON DELETE CASCADE
-)`); err != nil {
+  )`); err != nil {
 		return err
 	}
 
@@ -119,15 +119,9 @@ func AggregatePosts(postQty int, filterTag string) (posts []Post, err error) {
 
 	for rows.Next() {
 		post := Post{}
-		var update_date sql.NullString
-		err := rows.Scan(&post.Title, &post.FileName, &post.Description, &post.PubDate, &update_date)
+		err := rows.Scan(&post.Title, &post.FileName, &post.Description, &post.PubDate, &post.UpdateDate)
 		if err != nil {
 			return posts, err
-		}
-		if update_date.Valid {
-			post.UpdateDate = update_date.String
-		} else {
-			post.UpdateDate = ""
 		}
 		posts = append(posts, post)
 	}
