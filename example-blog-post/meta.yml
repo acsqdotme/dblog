@@ -10,3 +10,8 @@ tags:
 - history
 - articles
 - code
+# thumbnail is the only thing that's technically optional
+thumbnail:
+  src: path/to/some/pic.jpg
+  alt: description of image
+  title: witty remark about image
