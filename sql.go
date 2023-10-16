@@ -68,8 +68,8 @@ func MakeDB() (err error) {
   post_id INTEGER,
   tag_id INTEGER,
   PRIMARY KEY (post_id, tag_id),
-  FOREIGN KEY (post_id) REFERENCES posts(id),
-  FOREIGN KEY (tag_id) REFERENCES tags(id)
+  FOREIGN KEY (post_id) REFERENCES posts(id) ON DELETE CASCADE,
+  FOREIGN KEY (tag_id) REFERENCES tags(id) ON DELETE CASCADE
 )`); err != nil {
 		return err
 	}
