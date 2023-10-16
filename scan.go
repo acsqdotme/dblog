@@ -15,7 +15,7 @@ func checkPost(p Post) error { // don't need to check thumbnail
 		p.PubDate == "" ||
 		p.UpdateDate == "" ||
 		len(p.Tags) < 1 {
-		return errNotComplete
+		return errors.New("unfilled required attributes")
 	}
 	return nil
 }

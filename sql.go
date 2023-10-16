@@ -11,8 +11,7 @@ import (
 )
 
 var (
-	pathToDB       = "./posts.sqlite3"
-	errNotComplete = errors.New("unfilled required attributes")
+	pathToDB = "./posts.sqlite3"
 )
 
 // openDB just opens the connection to the db from the pathToDB package var
@@ -283,7 +282,7 @@ func checkTag(t Tag) error {
 	if t.Name == "" ||
 		t.Category == "" ||
 		t.Description == "" {
-		return errNotComplete
+		return errors.New("unfilled required attributes")
 	}
 	return nil
 }
