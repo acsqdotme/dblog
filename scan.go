@@ -54,7 +54,7 @@ func AddPost(post Post) (err error) {
 
 	_, err = db.Exec(`INSERT INTO post (title, file_name, description, pub_date, update_date, thumbnail)
   VALUES
-  (?,  ?,  ?,  ?,  ?,  ?, ?)
+  (?, ?, ?, ?, ?, ?)
   `, post.Title, post.FileName, post.Description, post.PubDate, post.UpdateDate, string(jsonThumbnail))
 	if err != nil {
 		return err
