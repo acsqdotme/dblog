@@ -3,6 +3,9 @@ package dblog
 import (
 	"encoding/json"
 	"errors"
+	"fmt"
+	"io/fs"
+	"path/filepath"
 )
 
 // checkPost is an internal func to ensure that all the attributes in a post
@@ -70,8 +73,20 @@ func AddPost(post Post) (err error) {
 	return nil
 }
 
+// ScanPosts is incomplete
 func ScanPosts() error {
 	// need to actually make this
-
-	return nil
+	err := filepath.Walk("./testDir", func(path string, info fs.FileInfo, err error) error {
+		if err != nil {
+			fmt.Println(err)
+			return err
+		}
+		fmt.Printf("path: %s is ", path)
+		if !info.IsDir() {
+			fmt.Printf("NOT ")
+		}
+		fmt.Printf("a directory\n")
+		return nil
+	})
+	return err
 }
