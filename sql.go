@@ -11,7 +11,7 @@ import (
 )
 
 var (
-	pathToDB = "./posts.sqlite3"
+	pathToDB = "./dblog.sqlite3"
 )
 
 // openDB just opens the connection to the db from the pathToDB package var
