@@ -5,7 +5,14 @@ import (
 	"errors"
 	"fmt"
 	"io/fs"
+	"os"
 	"path/filepath"
+
+	"gopkg.in/yaml.v3"
+)
+
+const (
+	pathToPostsDir = "./testDir" // very temporary; I'm planning on moving over to db method based approach.
 )
 
 // checkPost is an internal func to ensure that all the attributes in a post
@@ -71,6 +78,20 @@ func AddPost(post Post) (err error) {
 	}
 
 	return nil
+}
+
+// ReadMeta is gonna be for unmarshalling meta.yml into a Post struct
+func ReadMeta(path string) (p Post, err error) {
+	fileContent, err := os.ReadFile(path)
+	if err != nil {
+		return Post{}, err
+	}
+	err = yaml.Unmarshal(fileContent, &p)
+	if err != nil {
+		return Post{}, err
+	}
+
+	return p, nil
 }
 
 // ScanPosts is incomplete
