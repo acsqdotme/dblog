@@ -309,8 +309,8 @@ func AddTag(tag Tag) (err error) {
 	return nil
 }
 
-// DeletePost is incomplete
-func DeletePost(fileName string) (err error) {
+// deletePost deletes whatever filename for a post you feed it, if it exists.
+func deletePost(fileName string) (err error) {
 	if !DoesPostExist(fileName) {
 		return errors.New(fileName + " doesn't exist")
 	}
@@ -327,8 +327,8 @@ func DeletePost(fileName string) (err error) {
 	return nil
 }
 
-// DeleteTag is incomplete
-func DeleteTag(tagName string) (err error) {
+// deleteTag deletes whatever tag name you give it, if it exists.
+func deleteTag(tagName string) (err error) {
 	if !DoesTagExist(tagName) {
 		return errors.New(tagName + " doesn't exist")
 	}
