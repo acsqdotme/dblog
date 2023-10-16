@@ -68,8 +68,8 @@ func MakeDB() (err error) {
   post_id INTEGER,
   tag_id INTEGER,
   PRIMARY KEY (post_id, tag_id),
-  FOREIGN KEY (post_id) REFERENCES posts(id) ON DELETE CASCADE,
-  FOREIGN KEY (tag_id) REFERENCES tags(id) ON DELETE CASCADE
+  FOREIGN KEY (post_id) REFERENCES post(id) ON DELETE CASCADE,
+  FOREIGN KEY (tag_id) REFERENCES tag(id) ON DELETE CASCADE
   )`); err != nil {
 		return err
 	}
@@ -95,15 +95,15 @@ func AggregatePosts(postQty int, filterTag string) (posts []Post, err error) {
 	var query string
 	var filters []interface{}
 	if filterTag == "" {
-		query = `SELECT title, file_name, posts.description, pub_date, update_date
-  FROM posts
+		query = `SELECT title, file_name, post.description, pub_date, update_date
+  FROM post
   ORDER BY pub_date DESC`
 	} else {
-		query = `SELECT title, file_name, posts.description, pub_date, update_date
-  FROM posts JOIN posts_tags
-  ON posts.id = posts_tags.post_id JOIN tags
-  ON posts_tags.tag_id = tags.id
-  WHERE tags.name = ?
+		query = `SELECT title, file_name, post.description, pub_date, update_date
+  FROM post JOIN post_tag
+  ON post.id = post_tag.post_id JOIN tag
+  ON post_tag.tag_id = tag.id
+  WHERE tag.name = ?
   ORDER BY pub_date DESC`
 		filters = append(filters, filterTag)
 	}
@@ -142,16 +142,16 @@ func FetchPost(fileName string) (post Post, err error) {
 	var id int
 	var thumbnailJSON sql.NullString
 	err = db.QueryRow(`SELECT id, title, file_name, description, pub_date, update_date, thumbnail
-  FROM posts
+  FROM post
   WHERE file_name = ?`, fileName).Scan(&id, &post.Title, &post.FileName, &post.Description, &post.PubDate, &post.UpdateDate, &thumbnailJSON)
 	if err != nil {
 		return Post{}, err
 	}
 
-	tagRows, err := db.Query(`SELECT tags.name
-  FROM tags JOIN posts_tags
-  ON tags.id = posts_tags.tag_id
-  WHERE posts_tags.post_id = ?
+	tagRows, err := db.Query(`SELECT tag.name
+  FROM tag JOIN post_tag
+  ON tag.id = post_tag.tag_id
+  WHERE post_tag.post_id = ?
   ORDER BY name`, id)
 	if err != nil {
 		return Post{}, err
@@ -197,14 +197,14 @@ func FetchThumbnail() (post Post, err error) {
 	defer closeDB(db)
 
 	var thumbnailJSON sql.NullString
-	err = db.QueryRow(`SELECT title, file_name, posts.description, pub_date, update_date, thumbnail
-  FROM posts JOIN posts_tags
-  ON posts.id = posts_tags.post_id JOIN tags
-  ON posts_tags.tag_id = tags.id
-  WHERE tags.name = 'photos'
-  AND posts.thumbnail IS NOT NULL
-  AND posts.thumbnail <> ''
-  ORDER BY posts.pub_date DESC
+	err = db.QueryRow(`SELECT title, file_name, post.description, pub_date, update_date, thumbnail
+  FROM post JOIN post_tag
+  ON post.id = post_tag.post_id JOIN tag
+  ON post_tag.tag_id = tag.id
+  WHERE tag.name = 'photos'
+  AND post.thumbnail IS NOT NULL
+  AND post.thumbnail <> ''
+  ORDER BY post.pub_date DESC
   LIMIT 1`).Scan(&post.Title, &post.FileName, &post.Description, &post.PubDate, &post.UpdateDate, &thumbnailJSON)
 	if err != nil {
 		if err == sql.ErrNoRows {
@@ -227,7 +227,7 @@ func FetchTag(tagName string) (tag Tag, err error) {
 	defer closeDB(db)
 
 	err = db.QueryRow(`SELECT name, description, category
-  FROM tags
+  FROM tag
   WHERE name = ?`, tagName).Scan(&tag.Name, &tag.Description, &tag.Category)
 	if err != nil {
 		return Tag{}, err
@@ -244,7 +244,7 @@ func DoesPostExist(fileName string) bool {
 
 	var count int
 	err := db.QueryRow(`SELECT COUNT(*)
-  FROM posts
+  FROM post
   WHERE file_name = ?`, fileName).Scan(&count)
 	if err != nil {
 		log.Println(err.Error())
@@ -261,7 +261,7 @@ func DoesTagExist(tag string) bool {
 
 	var count int
 	err := db.QueryRow(`SELECT COUNT(*)
-  FROM tags
+  FROM tag
   WHERE name = ?`, tag).Scan(&count)
 	if err != nil {
 		log.Println(err.Error())
@@ -292,7 +292,7 @@ func AddTag(tag Tag) (err error) {
 	db := openDB()
 	defer closeDB(db)
 
-	_, err = db.Exec(`INSERT INTO tags (name, category, description)
+	_, err = db.Exec(`INSERT INTO tag (name, category, description)
   VALUES
   (?,  ?,  ?)
 `, tag.Name, tag.Category, tag.Description)
@@ -312,7 +312,7 @@ func deletePost(fileName string) (err error) {
 	db := openDB()
 	defer closeDB(db)
 
-	_, err = db.Exec(`DELETE FROM posts
+	_, err = db.Exec(`DELETE FROM post
   WHERE file_name = ?`, fileName)
 	if err != nil {
 		return err
@@ -330,7 +330,7 @@ func deleteTag(tagName string) (err error) {
 	db := openDB()
 	defer closeDB(db)
 
-	_, err = db.Exec(`DELETE FROM tags
+	_, err = db.Exec(`DELETE FROM tag
   WHERE name = ?`, tagName)
 	if err != nil {
 		return err

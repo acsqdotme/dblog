@@ -52,7 +52,7 @@ func AddPost(post Post) (err error) {
 		}
 	}
 
-	_, err = db.Exec(`INSERT INTO posts (title, file_name, description, pub_date, update_date, thumbnail)
+	_, err = db.Exec(`INSERT INTO post (title, file_name, description, pub_date, update_date, thumbnail)
   VALUES
   (?,  ?,  ?,  ?,  ?,  ?, ?)
   `, post.Title, post.FileName, post.Description, post.PubDate, post.UpdateDate, string(jsonThumbnail))
@@ -61,11 +61,11 @@ func AddPost(post Post) (err error) {
 	}
 
 	for _, t := range post.Tags {
-		_, err = db.Exec(`INSERT INTO posts_tags (post_id, tag_id)
+		_, err = db.Exec(`INSERT INTO post_tag (post_id, tag_id)
     VALUES
     (
-    (SELECT id FROM posts WHERE file_name = ?),
-    (SELECT id FROM tags WHERE name = ?)
+    (SELECT id FROM post WHERE file_name = ?),
+    (SELECT id FROM tag WHERE name = ?)
     )
     `, post.FileName, t.Name)
 	}
