@@ -1,21 +1,21 @@
-title:
+Title:
   Example Blog Post
-filename:
+FileName:
   example-blog-post
-description:
+Description:
   This is an example of a yaml metadata doc for the dblog package
-pubdate:
+PubDate:
   2023-10-31
 # if update not specified, it'll just be pubdate
-updatedate:
+UpdateDate:
   2023-11-01
-tags:
-- math
-- history
-- articles
-- code
+Tags:
+  - Name: math
+  - Name: history
+  - Name: articles
+  - Name: code
 # thumbnail is completely optional
-thumbnail:
-  src: path/to/some/pic.jpg
-  alt: description of image
-  title: witty remark about image
+Thumbnail:
+  Src: path/to/some/pic.jpg
+  Alt: description of image
+  Title: witty remark about image
