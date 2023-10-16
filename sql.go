@@ -41,7 +41,7 @@ func MakeDB() (err error) {
 	defer closeDB(db)
 
 	// post table
-	if _, err = db.Exec(`CREATE TABLE IF NOT EXISTS posts (
+	if _, err = db.Exec(`CREATE TABLE IF NOT EXISTS post (
   id INTEGER PRIMARY KEY AUTOINCREMENT,
   title TEXT NOT NULL UNIQUE,
   file_name TEXT NOT NULL UNIQUE,
@@ -54,7 +54,7 @@ func MakeDB() (err error) {
 	}
 
 	// tag table
-	if _, err = db.Exec(`CREATE TABLE IF NOT EXISTS tags (
+	if _, err = db.Exec(`CREATE TABLE IF NOT EXISTS tag (
   id INTEGER PRIMARY KEY AUTOINCREMENT,
   name TEXT NOT NULL UNIQUE,
   category STRING NOT NULL DEFAULT 'content', -- for medium, content, and lang
@@ -64,7 +64,7 @@ func MakeDB() (err error) {
 	}
 
 	// associative identity
-	if _, err = db.Exec(`CREATE TABLE IF NOT EXISTS posts_tags (
+	if _, err = db.Exec(`CREATE TABLE IF NOT EXISTS post_tag (
   post_id INTEGER,
   tag_id INTEGER,
   PRIMARY KEY (post_id, tag_id),
