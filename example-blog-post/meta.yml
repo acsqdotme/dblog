@@ -4,7 +4,7 @@ filename:
   example-blog-post
 description:
   This is an example of a yaml metadata doc for the dblog package
-pubdate: "2023-10-10" # must conform to yyyy-mm-dd
+pubdate: "2023-10-31"
 tags:
 - math
 - history
