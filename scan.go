@@ -97,16 +97,23 @@ func ReadMeta(path string) (p Post, err error) {
 // ScanPosts is incomplete
 func ScanPosts() error {
 	// need to actually make this
-	err := filepath.Walk("./testDir", func(path string, info fs.FileInfo, err error) error {
+	err := filepath.Walk(pathToPostsDir, func(path string, info fs.FileInfo, err error) error {
 		if err != nil {
 			fmt.Println(err)
 			return err
 		}
-		fmt.Printf("path: %s is ", path)
-		if !info.IsDir() {
-			fmt.Printf("NOT ")
+		if info.IsDir() && !DoesPostExist(info.Name()) && info.Name() != "testDir" {
+			fmt.Println("adding " + info.Name() + "to db")
+			post, err := ReadMeta(filepath.Join(pathToPostsDir, info.Name(), "meta.yml"))
+			if err != nil {
+				return err
+			}
+
+			err = AddPost(post)
+			if err != nil {
+				return err
+			}
 		}
-		fmt.Printf("a directory\n")
 		return nil
 	})
 	return err
